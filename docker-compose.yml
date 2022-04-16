@@ -2,20 +2,42 @@ version: '3.4'
 
 services:
   calculator:
-    image: calculator-1.1
+    image: calculator-1.2
     build:
       context: .
       dockerfile: src/Calculator/Dockerfile
     depends_on:
      - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
 
   rolls:
-    image: rolls-1.1
+    image: rolls-1.2
     build:
       context: .
       dockerfile: src/Rolls/Dockerfile
     depends_on:
      - redis
+    ports:
+     - 8080:5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+
+  presenter:
+    image: presenter-1.2
+    build:
+      context: .
+      dockerfile: src/Presenter/Dockerfile
+    ports:
+     - 8081:5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   redis:
     image: redis:6.2-alpine
@@ -23,9 +45,6 @@ services:
       - 6379:6379
 
 
-  presenter:
-    image: presenter-1.1
-    build:
-      context: .
-      dockerfile: src/Presenter/Dockerfile
+ 
+
 
